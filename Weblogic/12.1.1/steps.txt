@@ -1,0 +1,49 @@
+#first unzip Weblogic installer file
+
+#second step, I have to generate an image where I initialized a copy 
+#the files needed to install Weblogic 12.1.1 base on an image whit jdk7
+
+docker build --rm -t czar8a/weblogic:inst2 .
+
+#run a new container whit new image
+docker run -it --name srv_weblogic -p 8280:8080 -p 7201:7001 -p 8201:8001 czar8a/weblogic:inst2
+
+#into this image I installed weblogic and domain manually following these instructions
+
+http://www.snapdba.com/2013/04/weblogic-server-12c-12-1-1-installation/#.YKZByXmg8b7
+http://www.snapdba.com/2013/03/creating-a-domain-in-weblogic-11g-12c/#.YKZf03mg8b7
+
+#when the weblogic was installed I create a new image setting environment variables and run command
+#second dockerFile is into mnesageria folder
+
+cd mensageria
+docker build --rm -t czar8a/weblogic:12.1.1 .
+
+docker run -it --name srv_weblogic2 -p 8380:8080 -p 7301:7001 -p 8301:8001 czar8a/weblogic:12.1.1
+
+#now I have an image thas run a weblogic 12.1.1 using JDK 1.7
+
+
+
+#genaral notes
+
+
+# WebLogic 12c environment file
+export JAVA_HOME=/usr/local/jdk1.7.0_80
+export PATH=$JAVA_HOME/bin:$PATH
+export MW_HOME=/u01/app/oracle/middleware
+export WLS_HOME=$MW_HOME/wls_12.1.1
+export USER_MEM_ARGS="-Xms32m -Xmx200m -XX:MaxPermSize=350m"
+
+export JAVA_HOME=/usr/local/jdk1.7.0_80
+export MW_HOME=/u01/app/oracle/middleware
+
+
+docker exec -it srv_weblogic /bin/bash
+
+/u01/app/oracle/middleware/user_projects/domains/base_domain/startWebLogic.sh
+/u01/app/oracle/middleware/user_projects/domains/SnapDomain/startWebLogic.sh
+
+docker run -it --name srv_weblogic2 -p 8380:8080 -p 7301:7001 -p 8301:8001 czar8a/weblogic:12.1.1
+
+docker run -it --name srv_weblogic2 -p 8380:8080 -p 7301:7001 -p 8301:8001 czar8a/weblogic:mensageria
