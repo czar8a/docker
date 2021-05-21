@@ -1,4 +1,3 @@
-
 #first unzip Weblogic installer file
 
 #second step, I have to generate an image where I initialized a copy 
